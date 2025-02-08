@@ -1,7 +1,7 @@
-// DNI 78008606N BIBILEISHVILI MAMALADZE, NIKOLOZ
 #include <iostream>
 #include <cstring>
 #include <cstdio>
+#include <vector>
 
 using namespace std;
 
@@ -26,7 +26,7 @@ struct Team {
     Player players[kPLAYERS];
 };
 
-enum Error{
+enum Error {
     ERR_EMPTY,
     ERR_MAX_TEAMS,
     ERR_NO_LEAGUE,
@@ -36,12 +36,8 @@ enum Error{
     ERR_OPTION
 };
 
-/* Función que muestra los mensajes de error
-e: tipo de error a mostrar
-return: nada
-*/
-void error(Error e){
-    switch(e){
+void error(Error e) {
+    switch(e) {
         case ERR_EMPTY: cout << "ERROR: empty string" << endl;
             break;
         case ERR_MAX_TEAMS: cout << "ERROR: maximum number of teams reached" << endl;
@@ -57,7 +53,6 @@ void error(Error e){
         case ERR_OPTION: cout << "ERROR: wrong option" << endl;
     }
 }
-
 
 void showMenu() {
     cout << "1- Add team" << endl
@@ -81,15 +76,15 @@ int simulateGoals(Team &team) {
     return goals;
 }
 
-void addTeam(vector <Team> teams, bool &leaguePlayed) {
+void addTeam(vector<Team> &teams, bool &leaguePlayed) {
     if (teams.size() >= kMAXTEAMS) {
         error(ERR_MAX_TEAMS);
         return;
     }
 
     Team team;
-    team.id = teams[teams.size() - 1].id + 1;
-
+    team.id = teams.empty() ? 0 : teams.back().id + 1;
+    
     cout << "Enter team name: ";
     cin.getline(team.name, kTEAMNAME);
 
@@ -109,8 +104,8 @@ void addTeam(vector <Team> teams, bool &leaguePlayed) {
     leaguePlayed = false;
 }
 
-void addAllTeams(vector <Team> teams, bool &leaguePlayed) {
-    if (teams.size() > 0) {
+void addAllTeams(vector<Team> &teams, bool &leaguePlayed) {
+    if (!teams.empty()) {
         char response;
         do {
             cout << "Do you want to delete existing teams (y/n)? ";
@@ -119,7 +114,10 @@ void addAllTeams(vector <Team> teams, bool &leaguePlayed) {
             response = tolower(response);
         } while (response != 'y' && response != 'n');
 
-        if (response == 'n') return;
+        if (response == 'n') {
+            return;
+        }
+        teams.clear();
     }
 
     unsigned int n;
@@ -145,12 +143,11 @@ void addAllTeams(vector <Team> teams, bool &leaguePlayed) {
         }
         teams.push_back(team);
     }
-
     leaguePlayed = false;
 }
 
-void deleteTeam(vector <Team> teams, bool &leaguePlayed) {
-    if (teams.size() == 0) {
+void deleteTeam(vector<Team> &teams, bool &leaguePlayed) {
+    if (teams.empty()) {
         error(ERR_NO_TEAMS);
         return;
     }
@@ -164,25 +161,19 @@ void deleteTeam(vector <Team> teams, bool &leaguePlayed) {
         return;
     }
 
-    bool found = false;
-    for (unsigned int i = 0; i < teams.size(); i++) {
+    for (size_t i = 0; i < teams.size(); i++) {
         if (strcmp(teams[i].name, name) == 0) {
-            found = true;
-            //for (unsigned int j = i; j < teams.size() - 1; j++) {
-                //teams[j] = teams[j + 1];
             teams.erase(teams.begin() + i);
             leaguePlayed = false;
-            break;
+            return;
         }
     }
     
-    if (!found) {
-        error(ERR_NOT_EXIST);
-    }
+    error(ERR_NOT_EXIST);
 }
 
-void showTeams(vector <Team> teams, bool &leaguePlayed) {
-    if (teams.size() == 0) {
+void showTeams(const vector<Team> &teams) {
+    if (teams.empty()) {
         error(ERR_NO_TEAMS);
         return;
     }
@@ -192,7 +183,7 @@ void showTeams(vector <Team> teams, bool &leaguePlayed) {
     cin.getline(name, kTEAMNAME);
 
     if (strlen(name) == 0) {
-        for (unsigned int i = 0; i < teams.size(); i++) {
+        for (size_t i = 0; i < teams.size(); i++) {
             cout << "Name: " << teams[i].name << endl;
             cout << "Wins: " << teams[i].wins << endl;
             cout << "Losses: " << teams[i].losses << endl;
@@ -203,46 +194,44 @@ void showTeams(vector <Team> teams, bool &leaguePlayed) {
             }
             if (i < teams.size() - 1) cout << endl;
         }
-    } else {
-        bool found = false;
-        for (unsigned int i = 0; i < teams.size(); i++) {
-            if (strcmp(teams[i].name, name) == 0) {
-                found = true;
-                cout << "Name: " << teams[i].name << endl;
-                cout << "Wins: " << teams[i].wins << endl;
-                cout << "Losses: " << teams[i].losses << endl;
-                cout << "Draws: " << teams[i].draws << endl;
-                cout << "Points: " << teams[i].points << endl;
-                for (int j = 0; j < kPLAYERS; j++) {
-                    cout << teams[i].players[j].name << ": " << teams[i].players[j].goals << " goals" << endl;
-                }
-                break;
+        return;
+    }
+
+    for (const Team &team : teams) {
+        if (strcmp(team.name, name) == 0) {
+            cout << "Name: " << team.name << endl;
+            cout << "Wins: " << team.wins << endl;
+            cout << "Losses: " << team.losses << endl;
+            cout << "Draws: " << team.draws << endl;
+            cout << "Points: " << team.points << endl;
+            for (int j = 0; j < kPLAYERS; j++) {
+                cout << team.players[j].name << ": " << team.players[j].goals << " goals" << endl;
             }
-        }
-        if (!found) {
-            error(ERR_NOT_EXIST);
+            return;
         }
     }
+    
+    error(ERR_NOT_EXIST);
 }
 
-void playLeague(vector <Team> teams, bool &leaguePlayed) {
+void playLeague(vector<Team> &teams, bool &leaguePlayed) {
     if (teams.size() < 2) {
         error(ERR_NUM_TEAMS);
         return;
     }
 
     // Reset all stats
-    for (unsigned int i = 0; i < teams.size(); i++) {
-        teams[i].wins = teams[i].losses = teams[i].draws = teams[i].points = 0;
+    for (Team &team : teams) {
+        team.wins = team.losses = team.draws = team.points = 0;
         for (int j = 0; j < kPLAYERS; j++) {
-            teams[i].players[j].goals = 0;
-            teams[i].players[j].best = false;
+            team.players[j].goals = 0;
+            team.players[j].best = false;
         }
     }
 
     // Play all matches
-    for (unsigned int i = 0; i < teams.size() - 1; i++) {
-        for (unsigned int j = i + 1; j < teams.size(); j++) {
+    for (size_t i = 0; i < teams.size() - 1; i++) {
+        for (size_t j = i + 1; j < teams.size(); j++) {
             int goalsA = simulateGoals(teams[i]);
             int goalsB = simulateGoals(teams[j]);
 
@@ -264,34 +253,34 @@ void playLeague(vector <Team> teams, bool &leaguePlayed) {
     }
 
     // Find best players
-    for (unsigned int i = 0; i < teams.size(); i++) {
+    for (Team &team : teams) {
         int maxGoals = -1;
-        int bestPlayer = kPLAYERS - 1;
-        for (int j = kPLAYERS - 1; j >= 0; j--) {
-            if (teams[i].players[j].goals >= (unsigned) maxGoals) {
-                maxGoals = teams[i].players[j].goals;
+        int bestPlayer = -1;
+        for (int j = 0; j < kPLAYERS; j++) {
+            if ((int)team.players[j].goals >= maxGoals) {
+                maxGoals = team.players[j].goals;
                 bestPlayer = j;
             }
         }
-        teams[i].players[bestPlayer].best = true;
+        if (bestPlayer >= 0) {
+            team.players[bestPlayer].best = true;
+        }
     }
 
     leaguePlayed = true;
 }
 
-void showStandings(vector <Team> teams, bool &leaguePlayed) {
+void showStandings(const vector<Team> &teams, bool leaguePlayed) {
     if (!leaguePlayed) {
         error(ERR_NO_LEAGUE);
         return;
     }
 
-    Team sortedTeams[kMAXTEAMS];
-    for (unsigned int i = 0; i < teams.size(); i++) {
-        sortedTeams[i] = teams[i];
-    }
+    vector<Team> sortedTeams = teams;
 
-    for (unsigned int i = 0; i < teams.size() - 1; i++) {
-        for (unsigned int j = 0; j < teams.size() - i - 1; j++) {
+    // Sort by points (bubble sort to maintain original order for equal points)
+    for (size_t i = 0; i < sortedTeams.size() - 1; i++) {
+        for (size_t j = 0; j < sortedTeams.size() - i - 1; j++) {
             if (sortedTeams[j].points < sortedTeams[j + 1].points) {
                 Team temp = sortedTeams[j];
                 sortedTeams[j] = sortedTeams[j + 1];
@@ -300,27 +289,27 @@ void showStandings(vector <Team> teams, bool &leaguePlayed) {
         }
     }
 
-    for (unsigned int i = 0; i < teams.size(); i++) {
-        cout << sortedTeams[i].name << "|"
-             << sortedTeams[i].wins << "|"
-             << sortedTeams[i].draws << "|"
-             << sortedTeams[i].losses << "|"
-             << sortedTeams[i].points << endl;
+    for (const Team &team : sortedTeams) {
+        cout << team.name << "|"
+             << team.wins << "|"
+             << team.draws << "|"
+             << team.losses << "|"
+             << team.points << endl;
     }
 }
 
-void showBestPlayers(vector <Team> teams, bool &leaguePlayed) {
+void showBestPlayers(const vector<Team> &teams, bool leaguePlayed) {
     if (!leaguePlayed) {
         error(ERR_NO_LEAGUE);
         return;
     }
 
-    for (unsigned int i = 0; i < teams.size(); i++) {
+    for (const Team &team : teams) {
         for (int j = 0; j < kPLAYERS; j++) {
-            if (teams[i].players[j].best) {
-                cout << teams[i].name << "|"
-                     << teams[i].players[j].name << "|"
-                     << teams[i].players[j].goals << endl;
+            if (team.players[j].best) {
+                cout << team.name << "|"
+                     << team.players[j].name << "|"
+                     << team.players[j].goals << endl;
                 break;
             }
         }
@@ -331,9 +320,7 @@ int main() {
     char option;
     srand(888);
 
-    vector <Team> teams;
-    //Team teams[kMAXTEAMS];
-    //unsigned int numTeams = 0;
+    vector<Team> teams;
     bool leaguePlayed = false;
 
     do {
@@ -353,7 +340,7 @@ int main() {
                 deleteTeam(teams, leaguePlayed);
                 break;
             case '4':
-                showTeams(teams, leaguePlayed);
+                showTeams(teams);
                 break;
             case '5':
                 playLeague(teams, leaguePlayed);
