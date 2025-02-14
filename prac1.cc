@@ -5,6 +5,7 @@
 
 using namespace std;
 
+static unsigned int lastTeamId = 0;  // Variable global para mantener el último ID usado;
 const int kPLAYERNAME = 50;
 const int kTEAMNAME = 40;
 const int kPLAYERS = 5;
@@ -83,9 +84,9 @@ void addTeam(vector<Team> &teams, bool &leaguePlayed) {
     }
 
     Team team;
-    team.id = teams.empty() ? 0 : teams.back().id + 1;
+    team.id = lastTeamId++;  // Usar y luego incrementar el último ID
     
-    cout << "Enter team name: ";
+    cout << "Enter team name:";
     cin.getline(team.name, kTEAMNAME);
 
     if (strlen(team.name) == 0) {
@@ -103,7 +104,6 @@ void addTeam(vector<Team> &teams, bool &leaguePlayed) {
     teams.push_back(team);
     leaguePlayed = false;
 }
-
 void addAllTeams(vector<Team> &teams, bool &leaguePlayed) {
     if (!teams.empty()) {
         char response;
@@ -114,10 +114,12 @@ void addAllTeams(vector<Team> &teams, bool &leaguePlayed) {
             response = tolower(response);
         } while (response != 'y' && response != 'n');
 
-        if (response == 'n') {
+        if (response == 'y') {
+            lastTeamId = 0;  // Reset el contador de IDs solo si se borran todos los equipos
+            teams.clear();
+        } else {
             return;
         }
-        teams.clear();
     }
 
     unsigned int n;
@@ -132,8 +134,8 @@ void addAllTeams(vector<Team> &teams, bool &leaguePlayed) {
 
     for (unsigned int i = 0; i < n; i++) {
         Team team;
-        team.id = i;
-        snprintf(team.name, kTEAMNAME, "Team_%u", i);
+        team.id = lastTeamId++;  // Usar el contador global
+        snprintf(team.name, kTEAMNAME, "Team_%u", team.id);
         team.wins = team.losses = team.draws = team.points = 0;
 
         for (int j = 0; j < kPLAYERS; j++) {
@@ -152,24 +154,25 @@ void deleteTeam(vector<Team> &teams, bool &leaguePlayed) {
         return;
     }
 
-    cout << "Enter team name: ";
-    char name[kTEAMNAME];
-    cin.getline(name, kTEAMNAME);
+    while (true) {
+        cout << "Enter team name: ";
+        char name[kTEAMNAME];
+        cin.getline(name, kTEAMNAME);
 
-    if (strlen(name) == 0) {
-        error(ERR_EMPTY);
-        return;
-    }
-
-    for (size_t i = 0; i < teams.size(); i++) {
-        if (strcmp(teams[i].name, name) == 0) {
-            teams.erase(teams.begin() + i);
-            leaguePlayed = false;
+        if (strlen(name) == 0) {
+            error(ERR_EMPTY);
             return;
         }
+
+        for (size_t i = 0; i < teams.size(); i++) {
+            if (strcmp(teams[i].name, name) == 0) {
+                teams.erase(teams.begin() + i);
+                return;
+            }
+        }
+        
+        error(ERR_NOT_EXIST);
     }
-    
-    error(ERR_NOT_EXIST);
 }
 
 void showTeams(const vector<Team> &teams) {
@@ -178,8 +181,8 @@ void showTeams(const vector<Team> &teams) {
         return;
     }
 
-    cout << "Enter team name: ";
     char name[kTEAMNAME];
+    cout << "Enter team name: ";
     cin.getline(name, kTEAMNAME);
 
     if (strlen(name) == 0) {
@@ -192,11 +195,12 @@ void showTeams(const vector<Team> &teams) {
             for (int j = 0; j < kPLAYERS; j++) {
                 cout << teams[i].players[j].name << ": " << teams[i].players[j].goals << " goals" << endl;
             }
-            if (i < teams.size() - 1) cout << endl;
+            //if (i < teams.size() - 1) cout << endl;
         }
         return;
     }
 
+    bool found = false;
     for (const Team &team : teams) {
         if (strcmp(team.name, name) == 0) {
             cout << "Name: " << team.name << endl;
@@ -207,11 +211,15 @@ void showTeams(const vector<Team> &teams) {
             for (int j = 0; j < kPLAYERS; j++) {
                 cout << team.players[j].name << ": " << team.players[j].goals << " goals" << endl;
             }
-            return;
+            found = true;
+            break;
         }
     }
     
-    error(ERR_NOT_EXIST);
+    if (!found) {
+        error(ERR_NOT_EXIST);
+        showTeams(teams);  // Llamada recursiva para pedir otro nombre
+    }
 }
 
 void playLeague(vector<Team> &teams, bool &leaguePlayed) {
@@ -257,7 +265,7 @@ void playLeague(vector<Team> &teams, bool &leaguePlayed) {
         int maxGoals = -1;
         int bestPlayer = -1;
         for (int j = 0; j < kPLAYERS; j++) {
-            if ((int)team.players[j].goals >= maxGoals) {
+            if ((int)team.players[j].goals > maxGoals) {
                 maxGoals = team.players[j].goals;
                 bestPlayer = j;
             }
@@ -276,20 +284,24 @@ void showStandings(const vector<Team> &teams, bool leaguePlayed) {
         return;
     }
 
-    vector<Team> sortedTeams = teams;
+    // Crear un vector de índices para mantener el orden original en caso de empate
+    vector<size_t> indices(teams.size());
+    for (size_t i = 0; i < teams.size(); i++) {
+        indices[i] = i;
+    }
 
-    // Sort by points (bubble sort to maintain original order for equal points)
-    for (size_t i = 0; i < sortedTeams.size() - 1; i++) {
-        for (size_t j = 0; j < sortedTeams.size() - i - 1; j++) {
-            if (sortedTeams[j].points < sortedTeams[j + 1].points) {
-                Team temp = sortedTeams[j];
-                sortedTeams[j] = sortedTeams[j + 1];
-                sortedTeams[j + 1] = temp;
+    // Ordenar índices basados en puntos, manteniendo orden original en empates
+    for (size_t i = 0; i < indices.size() - 1; i++) {
+        for (size_t j = 0; j < indices.size() - i - 1; j++) {
+            if (teams[indices[j]].points < teams[indices[j + 1]].points) {
+                swap(indices[j], indices[j + 1]);
             }
         }
     }
 
-    for (const Team &team : sortedTeams) {
+    // Mostrar equipos usando los índices ordenados
+    for (size_t i = 0; i < indices.size(); i++) {
+        const Team &team = teams[indices[i]];
         cout << team.name << "|"
              << team.wins << "|"
              << team.draws << "|"
@@ -304,18 +316,26 @@ void showBestPlayers(const vector<Team> &teams, bool leaguePlayed) {
         return;
     }
 
+    // Mostrar en el orden original de los equipos
     for (const Team &team : teams) {
+        // Encontrar el jugador con más goles
+        int maxGoals = -1;
+        int bestPlayerIndex = -1;
+        
         for (int j = 0; j < kPLAYERS; j++) {
-            if (team.players[j].best) {
-                cout << team.name << "|"
-                     << team.players[j].name << "|"
-                     << team.players[j].goals << endl;
-                break;
+            if ((int)team.players[j].goals > maxGoals) {
+                maxGoals = team.players[j].goals;
+                bestPlayerIndex = j;
             }
+        }
+        
+        if (bestPlayerIndex >= 0) {
+            cout << team.name << "|"
+                 << team.players[bestPlayerIndex].name << "|"
+                 << team.players[bestPlayerIndex].goals << endl;
         }
     }
 }
-
 int main() {
     char option;
     srand(888);
