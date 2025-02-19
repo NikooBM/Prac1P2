@@ -1,0 +1,278 @@
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: ERROR: no league played
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: Enter number of teams: 1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: ERROR: no league played
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: 1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: Enter team name: Name: Team_0
+Wins: 3
+Losses: 2
+Draws: 0
+Points: 9
+Team_0-R1: 6 goals
+Team_0-R2: 5 goals
+Team_0-R3: 7 goals
+Team_0-R4: 4 goals
+Team_0-R5: 6 goals
+
+Name: Team_1
+Wins: 2
+Losses: 3
+Draws: 0
+Points: 6
+Team_1-R1: 3 goals
+Team_1-R2: 6 goals
+Team_1-R3: 5 goals
+Team_1-R4: 7 goals
+Team_1-R5: 4 goals
+
+Name: Team_2
+Wins: 2
+Losses: 2
+Draws: 1
+Points: 7
+Team_2-R1: 2 goals
+Team_2-R2: 7 goals
+Team_2-R3: 2 goals
+Team_2-R4: 6 goals
+Team_2-R5: 6 goals
+
+Name: Team_3
+Wins: 2
+Losses: 2
+Draws: 1
+Points: 7
+Team_3-R1: 6 goals
+Team_3-R2: 2 goals
+Team_3-R3: 6 goals
+Team_3-R4: 6 goals
+Team_3-R5: 5 goals
+
+Name: Team_4
+Wins: 1
+Losses: 2
+Draws: 2
+Points: 5
+Team_4-R1: 3 goals
+Team_4-R2: 7 goals
+Team_4-R3: 5 goals
+Team_4-R4: 7 goals
+Team_4-R5: 4 goals
+
+Name: Team_5
+Wins: 3
+Losses: 2
+Draws: 0
+Points: 9
+Team_5-R1: 6 goals
+Team_5-R2: 4 goals
+Team_5-R3: 4 goals
+Team_5-R4: 7 goals
+Team_5-R5: 4 goals
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: Team_0|Team_0-R5|6
+Team_1|Team_1-R5|4
+Team_2|Team_2-R5|6
+Team_3|Team_3-R5|5
+Team_4|Team_4-R5|4
+Team_5|Team_5-R5|4
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: Enter team name: 1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: ERROR: no league played
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: ERROR: no league played
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: 1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: Enter team name: Name: Team_0
+Wins: 2
+Losses: 2
+Draws: 0
+Points: 6
+Team_0-R1: 7 goals
+Team_0-R2: 3 goals
+Team_0-R3: 2 goals
+Team_0-R4: 1 goals
+Team_0-R5: 5 goals
+
+Name: Team_1
+Wins: 1
+Losses: 3
+Draws: 0
+Points: 3
+Team_1-R1: 4 goals
+Team_1-R2: 6 goals
+Team_1-R3: 2 goals
+Team_1-R4: 3 goals
+Team_1-R5: 3 goals
+
+Name: Team_2
+Wins: 1
+Losses: 3
+Draws: 0
+Points: 3
+Team_2-R1: 2 goals
+Team_2-R2: 6 goals
+Team_2-R3: 0 goals
+Team_2-R4: 2 goals
+Team_2-R5: 2 goals
+
+Name: Team_4
+Wins: 3
+Losses: 1
+Draws: 0
+Points: 9
+Team_4-R1: 4 goals
+Team_4-R2: 3 goals
+Team_4-R3: 4 goals
+Team_4-R4: 4 goals
+Team_4-R5: 3 goals
+
+Name: Team_5
+Wins: 3
+Losses: 1
+Draws: 0
+Points: 9
+Team_5-R1: 5 goals
+Team_5-R2: 2 goals
+Team_5-R3: 2 goals
+Team_5-R4: 6 goals
+Team_5-R5: 7 goals
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: Team_4|3|0|1|9
+Team_5|3|0|1|9
+Team_0|2|0|2|6
+Team_1|1|0|3|3
+Team_2|1|0|3|3
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: Team_0|Team_0-R5|5
+Team_1|Team_1-R5|3
+Team_2|Team_2-R5|2
+Team_4|Team_4-R5|3
+Team_5|Team_5-R5|7
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: Do you want to delete existing teams (y/n)? Enter number of teams: 1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: ERROR: no league played
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: ERROR: no league played
+1- Add team
+2- Add all teams
+3- Delete team
+4- Show teams
+5- Play league
+6- Show standings
+7- Show best players
+q- Quit
+Option: 
