@@ -5,7 +5,6 @@
 
 using namespace std;
 
-static unsigned int lastTeamId = 0;  // Variable global para mantener el último ID usado;
 const int kPLAYERNAME = 50;
 const int kTEAMNAME = 40;
 const int kPLAYERS = 5;
@@ -77,14 +76,14 @@ int simulateGoals(Team &team) {
     return goals;
 }
 
-void addTeam(vector<Team> &teams, bool &leaguePlayed) {
+void addTeam(vector<Team> &teams, bool &leaguePlayed, unsigned int* lastTeamId) {
     if (teams.size() >= kMAXTEAMS) {
         error(ERR_MAX_TEAMS);
         return;
     }
 
     Team team;
-    team.id = lastTeamId++; // Usar el contador global
+    team.id = (*lastTeamId)++;
     
     cout << "Enter team name:";
     cin.getline(team.name, kTEAMNAME);
@@ -96,7 +95,7 @@ void addTeam(vector<Team> &teams, bool &leaguePlayed) {
     team.wins = team.losses = team.draws = team.points = 0;
 
     for (int i = 0; i < kPLAYERS; i++) {
-        snprintf(team.players[i].name, kPLAYERNAME, "%s-R%d", team.name, i + 1); // Nombre del jugador
+        snprintf(team.players[i].name, kPLAYERNAME, "%s-R%d", team.name, i + 1);
         team.players[i].goals = 0;
         team.players[i].best = false;
     }
@@ -105,7 +104,7 @@ void addTeam(vector<Team> &teams, bool &leaguePlayed) {
     leaguePlayed = false;
 }
 
-void addAllTeams(vector<Team> &teams, bool &leaguePlayed) {
+void addAllTeams(vector<Team> &teams, bool &leaguePlayed, unsigned int* lastTeamId) {
     if (!teams.empty()) {
         char response;
         do {
@@ -116,7 +115,7 @@ void addAllTeams(vector<Team> &teams, bool &leaguePlayed) {
         } while (response != 'y' && response != 'n');
 
         if (response == 'y') {
-            lastTeamId = 0;  // Reset el contador de IDs solo si se borran todos los equipos
+            *lastTeamId = 0;
             teams.clear();
         } else {
             return;
@@ -135,7 +134,7 @@ void addAllTeams(vector<Team> &teams, bool &leaguePlayed) {
 
     for (unsigned int i = 0; i < n; i++) {
         Team team;
-        team.id = lastTeamId++;  // Usar el contador global
+        team.id = (*lastTeamId)++;
         snprintf(team.name, kTEAMNAME, "Team_%u", team.id);
         team.wins = team.losses = team.draws = team.points = 0;
 
@@ -218,7 +217,7 @@ void showTeams(const vector<Team> &teams) {
     
     if (!found) {
         error(ERR_NOT_EXIST);
-        showTeams(teams);  // Llamada recursiva para pedir otro nombre
+        showTeams(teams);
     }
 }
 
@@ -284,13 +283,11 @@ void showStandings(const vector<Team> &teams, bool leaguePlayed) {
         return;
     }
 
-    // Crear un vector de índices para mantener el orden original en caso de empate
     vector<size_t> indices(teams.size());
     for (size_t i = 0; i < teams.size(); i++) {
         indices[i] = i;
     }
 
-    // Ordenar índices basados en puntos, manteniendo orden original en empates
     for (size_t i = 0; i < indices.size() - 1; i++) {
         for (size_t j = 0; j < indices.size() - i - 1; j++) {
             if (teams[indices[j]].points < teams[indices[j + 1]].points) {
@@ -299,7 +296,6 @@ void showStandings(const vector<Team> &teams, bool leaguePlayed) {
         }
     }
 
-    // Mostrar equipos usando los índices ordenados
     for (size_t i = 0; i < indices.size(); i++) {
         const Team &team = teams[indices[i]];
         cout << team.name << "|"
@@ -316,9 +312,7 @@ void showBestPlayers(const vector<Team> &teams, bool leaguePlayed) {
         return;
     }
 
-    // Mostrar en el orden original de los equipos
     for (const Team &team : teams) {
-        // Encontrar el jugador con más goles
         int maxGoals = -1;
         int bestPlayerIndex = -1;
         
@@ -336,12 +330,14 @@ void showBestPlayers(const vector<Team> &teams, bool leaguePlayed) {
         }
     }
 }
+
 int main() {
     char option;
     srand(888);
 
     vector<Team> teams;
     bool leaguePlayed = false;
+    unsigned int lastTeamId = 0;
 
     do {
         showMenu();
@@ -351,10 +347,10 @@ int main() {
 
         switch (option) {
             case '1':
-                addTeam(teams, leaguePlayed);
+                addTeam(teams, leaguePlayed, &lastTeamId);
                 break;
             case '2':
-                addAllTeams(teams, leaguePlayed);
+                addAllTeams(teams, leaguePlayed, &lastTeamId);
                 break;
             case '3':
                 deleteTeam(teams, leaguePlayed);
